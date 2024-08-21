@@ -1,16 +1,16 @@
 package org.example.models;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /* The Order class will handle customer orders.
  * This class will include properties such as order ID, items ordered, total price, and status.
  */
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class Order { // 'orderId': Unique identifier for each order.
+public class Order {
     private String orderId;
-    private Map<String, Integer> itemsOrdered; // Item name as key, quantity as value
-    private double totalPrice; // 'totalPrice': The total price of the order.
+    private Map<MenuItem, Integer> itemsOrdered; // MenuItem as key, quantity as value
+    private double totalPrice;
     private String status; // "Waiting", "Preparing", "Ready"
 
     // Constructor
@@ -22,20 +22,20 @@ public class Order { // 'orderId': Unique identifier for each order.
     }
 
     // Methods to add and remove items
-    public void addItem(String itemName, int quantity, double price) {
-        this.itemsOrdered.put(itemName, this.itemsOrdered.getOrDefault(itemName, 0) + quantity);
-        this.totalPrice += quantity * price;
+    public void addItem(MenuItem item, int quantity) {
+        this.itemsOrdered.put(item, this.itemsOrdered.getOrDefault(item, 0) + quantity);
+        this.totalPrice += quantity * item.getPrice();
     }
 
-    public void removeItem(String itemName, int quantity, double price) {
-        if (this.itemsOrdered.containsKey(itemName)) {
-            int currentQuantity = this.itemsOrdered.get(itemName);
+    public void removeItem(MenuItem item, int quantity) {
+        if (this.itemsOrdered.containsKey(item)) {
+            int currentQuantity = this.itemsOrdered.get(item);
             if (currentQuantity <= quantity) {
-                this.itemsOrdered.remove(itemName);
-                this.totalPrice -= currentQuantity * price;
+                this.itemsOrdered.remove(item);
+                this.totalPrice -= currentQuantity * item.getPrice();
             } else {
-                this.itemsOrdered.put(itemName, currentQuantity - quantity);
-                this.totalPrice -= quantity * price;
+                this.itemsOrdered.put(item, currentQuantity - quantity);
+                this.totalPrice -= quantity * item.getPrice();
             }
         }
     }
@@ -45,7 +45,7 @@ public class Order { // 'orderId': Unique identifier for each order.
         return orderId;
     }
 
-    public Map<String, Integer> getItemsOrdered() {
+    public Map<MenuItem, Integer> getItemsOrdered() {
         return itemsOrdered;
     }
 
@@ -75,4 +75,3 @@ public class Order { // 'orderId': Unique identifier for each order.
                 '}';
     }
 }
-

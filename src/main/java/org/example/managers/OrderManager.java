@@ -1,10 +1,10 @@
 package org.example.managers;
 
-// FThis class will manage multiple orders, including creating, updating, and tracking the status of each order.
-
 import org.example.models.Order;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class OrderManager {
@@ -43,5 +43,9 @@ public class OrderManager {
     public Order getOrderById(String orderId) {
         return orders.get(orderId);
     }
-}
 
+    // Method to return all orders as a list
+    public List<Order> getAllOrders() {
+        return new ArrayList<>(orders.values());
+    }
+}

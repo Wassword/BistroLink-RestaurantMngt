@@ -41,6 +41,7 @@ public class MenuItem {
     }
 
     public void setName(String name) {
+
         this.name = name;
     }
 

@@ -1,23 +1,15 @@
 package org.example.main;
 
-import org.example.managers.OrderManager;
-import org.example.managers.ReservationManager;
-import org.example.managers.SpecialOfferManager;
-import org.example.managers.TableManager;
-import org.example.managers.MenuManagement;
-import org.example.models.MenuItem;
-import org.example.models.Order;
-import org.example.models.Reservation;
-import org.example.models.SpecialOffer;
-import org.example.models.Table;
-import org.example.models.UserLogin;
-import org.example.managers.InventoryManagement;
+import org.example.managers.*;
+import org.example.models.*;
 import org.example.reports.SalesReport;
+import org.example.utils.Colors;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Scanner;
+
 
 public class Main {
     public static void main(String[] args) {
@@ -29,22 +21,23 @@ public class Main {
         TableManager tableManager = new TableManager();
         InventoryManagement inventoryManagement = new InventoryManagement(5);  // Set a default low stock threshold
         MenuManagement menuManagement = new MenuManagement();
+        StaffManagement staffManagement = new StaffManagement();  // Initialize StaffManagement
 
         // User Login Process
-        System.out.println("Welcome to the Restaurant Management System");
-        System.out.print("Please enter your username: ");
+        System.out.println(Colors.GREEN + "Welcome to the Restaurant Management System" + Colors.RESET);
+        System.out.print(Colors.YELLOW + "Please enter your username: " + Colors.RESET);
         String username = scanner.nextLine();
-        System.out.print("Please enter your password: ");
+        System.out.print(Colors.YELLOW + "Please enter your password: " + Colors.RESET);
         String password = scanner.nextLine();
 
         try {
             if (userLogin.login(username, password)) {
-                System.out.println("Login successful!");
+                System.out.println(Colors.GREEN + "Login successful!" + Colors.RESET);
                 String role = userLogin.getRole(username);
-                System.out.println("Your role: " + role);
+                System.out.println(Colors.BLUE + "Your role: " + role + Colors.RESET);
 
                 while (true) {
-                    System.out.println("\nRestaurant Management System");
+                    System.out.println("\n" + Colors.BLUE + "Restaurant Management System" + Colors.RESET);
                     System.out.println("1. Create a Reservation");
                     System.out.println("2. Manage Special Offers");
                     System.out.println("3. Process Orders");
@@ -53,7 +46,8 @@ public class Main {
                     System.out.println("6. Manage Menu");
                     System.out.println("7. Generate Sales Report");
                     System.out.println("8. Exit");
-                    System.out.print("Select an option: ");
+                    System.out.println("9. Manage Staff");  // New option for managing staff
+                    System.out.print(Colors.YELLOW + "Select an option: " + Colors.RESET);
 
                     int option = scanner.nextInt();
                     scanner.nextLine();  // Consume the newline
@@ -77,7 +71,7 @@ public class Main {
                             System.out.println("2. List All Special Offers");
                             System.out.println("3. Apply Special Offer to Order");
                             System.out.println("4. Remove a Special Offer");
-                            System.out.print("Select an option: ");
+                            System.out.print(Colors.YELLOW + "Select an option: " + Colors.RESET);
                             int specialOfferOption = scanner.nextInt();
                             scanner.nextLine();  // Consume the newline
 
@@ -118,7 +112,7 @@ public class Main {
                                     break;
 
                                 default:
-                                    System.out.println("Invalid option.");
+                                    System.out.println(Colors.RED + "Invalid option." + Colors.RESET);
                             }
                             break;
 
@@ -126,7 +120,7 @@ public class Main {
                             System.out.println("1. Create a new Order");
                             System.out.println("2. Update Order Status");
                             System.out.println("3. List all Orders");
-                            System.out.print("Select an option: ");
+                            System.out.print(Colors.YELLOW + "Select an option: " + Colors.RESET);
                             int orderOption = scanner.nextInt();
                             scanner.nextLine();  // Consume the newline
 
@@ -177,7 +171,7 @@ public class Main {
                                     break;
 
                                 default:
-                                    System.out.println("Invalid option.");
+                                    System.out.println(Colors.RED + "Invalid option." + Colors.RESET);
                             }
                             break;
 
@@ -186,7 +180,7 @@ public class Main {
                             System.out.println("2. List all Tables");
                             System.out.println("3. Assign Customer to a Table");
                             System.out.println("4. Update Table Status");
-                            System.out.print("Select an option: ");
+                            System.out.print(Colors.YELLOW + "Select an option: " + Colors.RESET);
                             int tableOption = scanner.nextInt();
                             scanner.nextLine();  // Consume the newline
 
@@ -222,7 +216,7 @@ public class Main {
                                     break;
 
                                 default:
-                                    System.out.println("Invalid option.");
+                                    System.out.println(Colors.RED + "Invalid option." + Colors.RESET);
                             }
                             break;
 
@@ -232,7 +226,7 @@ public class Main {
                             System.out.println("3. Check Ingredient Stock");
                             System.out.println("4. Load Inventory from File");
                             System.out.println("5. Save Inventory to File");
-                            System.out.print("Select an option: ");
+                            System.out.print(Colors.YELLOW + "Select an option: " + Colors.RESET);
                             int inventoryOption = scanner.nextInt();
                             scanner.nextLine();  // Consume the newline
 
@@ -275,7 +269,7 @@ public class Main {
                                     break;
 
                                 default:
-                                    System.out.println("Invalid option.");
+                                    System.out.println(Colors.RED + "Invalid option." + Colors.RESET);
                             }
                             break;
 
@@ -285,7 +279,7 @@ public class Main {
                             System.out.println("3. Edit Menu Item");
                             System.out.println("4. Save Menu");
                             System.out.println("5. Load Menu");
-                            System.out.print("Select an option: ");
+                            System.out.print(Colors.YELLOW + "Select an option: " + Colors.RESET);
                             int menuOption = scanner.nextInt();
                             scanner.nextLine();  // Consume the newline
 
@@ -355,7 +349,7 @@ public class Main {
                                     break;
 
                                 default:
-                                    System.out.println("Invalid option.");
+                                    System.out.println(Colors.RED + "Invalid option." + Colors.RESET);
                             }
                             break;
 
@@ -373,19 +367,77 @@ public class Main {
                             break;
 
                         case 8:
-                            System.out.println("Exiting the system.");
+                            System.out.println(Colors.BLUE + "Exiting the system." + Colors.RESET);
                             scanner.close();
                             return;
 
+                        case 9:
+                            System.out.println("1. Add Staff");
+                            System.out.println("2. Remove Staff");
+                            System.out.println("3. Edit Staff");
+                            System.out.println("4. Display All Staff");
+                            System.out.print(Colors.YELLOW + "Select an option: " + Colors.RESET);
+                            int staffOption = scanner.nextInt();
+                            scanner.nextLine();  // Consume the newline
+
+                            switch (staffOption) {
+                                case 1:
+                                    System.out.print(Colors.YELLOW + "Enter Staff ID: " + Colors.RESET);
+                                    int staffId = scanner.nextInt();
+                                    scanner.nextLine(); // Consume the newline
+                                    System.out.print(Colors.YELLOW + "Enter Staff Name: " + Colors.RESET);
+                                    String staffName = scanner.nextLine();
+                                    System.out.print(Colors.YELLOW + "Enter Staff Role: " + Colors.RESET);
+                                    String staffRole = scanner.nextLine();
+                                    System.out.print(Colors.YELLOW + "Enter Hours Worked: " + Colors.RESET);
+                                    int hoursWorked = scanner.nextInt();
+                                    scanner.nextLine(); // Consume the newline
+
+                                    Staff newStaff = new Staff(staffId, staffName, staffRole, hoursWorked);
+                                    staffManagement.addStaff(newStaff);
+                                    break;
+
+                                case 2:
+                                    System.out.print(Colors.YELLOW + "Enter Staff ID to remove: " + Colors.RESET);
+                                    int removeStaffId = scanner.nextInt();
+                                    scanner.nextLine(); // Consume the newline
+                                    staffManagement.removeStaff(removeStaffId);
+                                    break;
+
+                                case 3:
+                                    System.out.print(Colors.YELLOW + "Enter Staff ID to edit: " + Colors.RESET);
+                                    int editStaffId = scanner.nextInt();
+                                    scanner.nextLine(); // Consume the newline
+                                    System.out.print(Colors.YELLOW + "Enter New Staff Name: " + Colors.RESET);
+                                    String newStaffName = scanner.nextLine();
+                                    System.out.print(Colors.YELLOW + "Enter New Staff Role: " + Colors.RESET);
+                                    String newStaffRole = scanner.nextLine();
+                                    System.out.print(Colors.YELLOW + "Enter New Hours Worked: " + Colors.RESET);
+                                    int newHoursWorked = scanner.nextInt();
+                                    scanner.nextLine(); // Consume the newline
+
+                                    staffManagement.editStaff(editStaffId, newStaffName, newStaffRole, newHoursWorked);
+                                    break;
+
+                                case 4:
+                                    staffManagement.displayStaff();
+                                    break;
+
+                                default:
+                                    System.out.println(Colors.RED + "Invalid option." + Colors.RESET);
+                            }
+                            break;
+
                         default:
-                            System.out.println("Invalid option, please try again.");
+                            System.out.println(Colors.RED + "Invalid option, please try again." + Colors.RESET);
                     }
                 }
             } else {
-                System.out.println("Invalid username or password.");
+                System.out.println(Colors.RED + "Invalid username or password." + Colors.RESET);
             }
         } catch (Exception e) {
-            System.out.println("An error occurred during login: " + e.getMessage());
+            System.out.println(Colors.RED + "An error occurred during login: " + e.getMessage() + Colors.RESET);
         }
     }
 }
+

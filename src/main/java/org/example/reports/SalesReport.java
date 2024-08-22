@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 public class SalesReport {
-    private double totalRevenue;
-    private Map<String, Integer> popularItems;
-    private Map<Integer, Double> tableSales;
+    private final double totalRevenue;
+    private final Map<String, Integer> popularItems;
+    private final Map<Integer, Double> tableSales;
 
     public SalesReport(double totalRevenue, Map<String, Integer> popularItems, Map<Integer, Double> tableSales) {
         this.totalRevenue = totalRevenue;

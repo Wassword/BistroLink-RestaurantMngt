@@ -1,14 +1,15 @@
 package org.example.models;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
 public class UserLogin {
-    private HashMap<String, String> users = new HashMap<>();
-    private HashMap<String, String> roles = new HashMap<>();
+    private final HashMap<String, String> users = new HashMap<>();
+    private final HashMap<String, String> roles = new HashMap<>();
     private static final String USER_DATA_FILE = "users.txt";
 
     public UserLogin() {
@@ -16,7 +17,8 @@ public class UserLogin {
         try {
             loadUsers();
         } catch (IOException e) {
-            e.printStackTrace();
+             e.printStackTrace();
+
         }
     }
 
@@ -38,7 +40,7 @@ public class UserLogin {
 
     private String hashPassword(String password) throws Exception {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
-        byte[] hash = md.digest(password.getBytes("UTF-8"));
+        byte[] hash = md.digest(password.getBytes(StandardCharsets.UTF_8));
         StringBuilder sb = new StringBuilder();
         for (byte b : hash) {
             sb.append(String.format("%02x", b));

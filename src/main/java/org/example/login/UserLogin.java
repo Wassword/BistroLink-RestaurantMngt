@@ -1,11 +1,10 @@
-package org.example.models;
+package org.example.login;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 public class UserLogin {
     private final HashMap<String, String> users = new HashMap<>();

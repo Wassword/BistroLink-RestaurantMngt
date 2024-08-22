@@ -16,14 +16,13 @@ public class CustomerOrderSystem {
 
         Scanner scanner = new Scanner(System.in);
         MenuManagement menuManagement = new MenuManagement();
-        OrderManager orderManager = new OrderManager();
+        OrderManager orderManager = OrderManager.getInstance();  // Ensure we're using the singleton instance
 
         try {
             menuManagement.loadMenu();
         } catch (Exception e) {
             System.out.println("Error loading menu: " + e.getMessage());
             System.out.println("Initializing a fresh menu...");
-            // Optionally initialize some default menu items
             menuManagement.initializeMenu();  // This could be a method to populate with default items
         }
 
@@ -38,6 +37,7 @@ public class CustomerOrderSystem {
         System.out.print("Enter Order ID: ");
         String orderId = scanner.nextLine();
         Order order = new Order(orderId);
+        System.out.println("DEBUG: Created Order with ID: " + orderId); // Debugging
 
         while (true) {
             System.out.print("Enter Item Name (or 'done' to finish): ");
@@ -52,11 +52,13 @@ public class CustomerOrderSystem {
             }
             System.out.print("Enter Quantity: ");
             int quantity = scanner.nextInt();
-            scanner.nextLine();  // Consume the newline
+            scanner.nextLine();  // Consume newline
             order.addItem(menuItem, quantity);
+            System.out.print("DEBUG: Added item to order: " + menuItem.getName() + " x " + quantity); // Debugging
         }
 
+        // Finalize and add the order to OrderManager
         orderManager.createOrder(order);
-        System.out.println("Order created successfully!");
+        System.out.println("DEBUG: Order added to OrderManager: " + order.getOrderId()); // "Order has been added successfully!");
     }
 }

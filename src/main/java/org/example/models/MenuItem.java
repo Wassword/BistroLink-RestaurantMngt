@@ -2,6 +2,7 @@ package org.example.models;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.ArrayList;
 
 public class MenuItem implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -18,10 +19,11 @@ public class MenuItem implements Serializable {
         this.description = description;
         this.preparationTime = preparationTime;
         this.price = price;
-        this.ingredients = ingredients;
+        // Defensive copy of the ingredients list
+        this.ingredients = new ArrayList<>(ingredients);
     }
 
-    // Getter and setters for menu item properties
+    // Getters and Setters for menu item properties
     public String getName() {
         return name;
     }
@@ -39,11 +41,11 @@ public class MenuItem implements Serializable {
     }
 
     public List<String> getIngredients() {
-        return ingredients;
+        // Return a defensive copy to prevent external modification
+        return new ArrayList<>(ingredients);
     }
 
     public void setName(String name) {
-
         this.name = name;
     }
 
@@ -60,7 +62,8 @@ public class MenuItem implements Serializable {
     }
 
     public void setIngredients(List<String> ingredients) {
-        this.ingredients = ingredients;
+        // Defensive copy of the ingredients list
+        this.ingredients = new ArrayList<>(ingredients);
     }
 
     @Override

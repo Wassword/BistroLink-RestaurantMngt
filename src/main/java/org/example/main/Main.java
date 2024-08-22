@@ -6,10 +6,10 @@ import org.example.models.*;
 import org.example.reports.SalesReport;
 import org.example.utils.Colors;
 
+import java.io.FileWriter;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Scanner;
+import java.util.List;
 
 public class Main {
 
@@ -18,7 +18,7 @@ public class Main {
         UserLogin userLogin = new UserLogin();
         ReservationManager reservationManager = new ReservationManager();
         SpecialOfferManager specialOfferManager = new SpecialOfferManager();
-        OrderManager orderManager = new OrderManager();
+        OrderManager orderManager = OrderManager.getInstance();
         TableManager tableManager = new TableManager();
         InventoryManagement inventoryManagement = new InventoryManagement(5);  // Set a default low stock threshold
         MenuManagement menuManagement = new MenuManagement();
@@ -26,7 +26,35 @@ public class Main {
 
         System.out.println(Colors.GREEN + "Welcome to the Restaurant Management System!" + Colors.RESET);
 
-        // User Login Process
+        while (true) {
+            System.out.println("\n1. Login");
+            System.out.println("2. Register a New Employee");
+            System.out.println("3. Exit");
+            System.out.print("Select an option: ");
+            int initialOption = scanner.nextInt();
+            scanner.nextLine();  // Consume the newline
+
+            switch (initialOption) {
+                case 1:
+                    handleLogin(scanner, userLogin, reservationManager, specialOfferManager, orderManager, tableManager, inventoryManagement, menuManagement, staffManagement);
+                    break;
+
+                case 2:
+                    registerNewEmployee(scanner, userLogin);
+                    break;
+
+                case 3:
+                    System.out.println("Exiting the system.");
+                    scanner.close();
+                    return;
+
+                default:
+                    System.out.println("Invalid option, please try again.");
+            }
+        }
+    }
+
+    private static void handleLogin(Scanner scanner, UserLogin userLogin, ReservationManager reservationManager, SpecialOfferManager specialOfferManager, OrderManager orderManager, TableManager tableManager, InventoryManagement inventoryManagement, MenuManagement menuManagement, StaffManagement staffManagement) {
         System.out.print(Colors.YELLOW + "Please enter your username: " + Colors.RESET);
         String username = scanner.nextLine();
         System.out.print(Colors.YELLOW + "Please enter your password: " + Colors.RESET);
@@ -40,57 +68,88 @@ public class Main {
 
                 while (true) {
                     System.out.println("\nRestaurant Management System");
-                    System.out.println("1. Create a Reservation");
-                    System.out.println("2. Manage Special Offers");
-                    System.out.println("3. Process Orders");
-                    System.out.println("4. Manage Tables");
-                    System.out.println("5. Manage Inventory");
-                    System.out.println("6. Manage Menu");
-                    System.out.println("7. Generate Sales Report");
-                    System.out.println("8. Manage Staff");
-                    System.out.println("9. Exit");
-                    System.out.print("Select an option: ");
 
+                    // Menu options based on role
+                    if ("Manager".equalsIgnoreCase(role)) {
+                        System.out.println("1. Create a Reservation");
+                        System.out.println("2. Manage Special Offers");
+                        System.out.println("3. Process Orders");
+                        System.out.println("4. Manage Tables");
+                        System.out.println("5. Manage Inventory");
+                        System.out.println("6. Manage Menu");
+                        System.out.println("7. Generate Sales Report");
+                        System.out.println("8. Manage Staff");
+                        System.out.println("9. Exit");
+                    } else if ("Staff".equalsIgnoreCase(role)) {
+                        System.out.println("1. Create a Reservation");
+                        System.out.println("2. Process Orders");
+                        System.out.println("3. Exit");
+                    }
+
+                    System.out.print("Select an option: ");
                     int option = scanner.nextInt();
                     scanner.nextLine();  // Consume the newline
 
                     switch (option) {
                         case 1:
-                            createReservation(scanner, reservationManager);
+                            reservationManager.createAndAddReservation(scanner);  // Delegate to ReservationManager
                             break;
 
                         case 2:
-                            manageSpecialOffers(scanner, specialOfferManager, orderManager);
+                            if ("Manager".equalsIgnoreCase(role)) {
+                                manageSpecialOffers(scanner, specialOfferManager, orderManager);
+                            } else if ("Staff".equalsIgnoreCase(role)) {
+                                processOrders(scanner, orderManager, menuManagement);
+                            }
                             break;
 
                         case 3:
-                            processOrders(scanner, orderManager, menuManagement);
+                            if ("Manager".equalsIgnoreCase(role)) {
+                                processOrders(scanner, orderManager, menuManagement);
+                            } else if ("Staff".equalsIgnoreCase(role)) {
+                                System.out.println("Exiting the system.");
+                                scanner.close();
+                                return;
+                            }
                             break;
 
                         case 4:
-                            manageTables(scanner, tableManager);
+                            if ("Manager".equalsIgnoreCase(role)) {
+                                manageTables(scanner, tableManager);
+                            }
                             break;
 
                         case 5:
-                            manageInventory(scanner, inventoryManagement);
+                            if ("Manager".equalsIgnoreCase(role)) {
+                                manageInventory(scanner, inventoryManagement);
+                            }
                             break;
 
                         case 6:
-                            manageMenu(scanner, menuManagement);
+                            if ("Manager".equalsIgnoreCase(role)) {
+                                manageMenu(scanner, menuManagement);
+                            }
                             break;
 
                         case 7:
-                            generateSalesReport(orderManager);
+                            if ("Manager".equalsIgnoreCase(role)) {
+                                generateSalesReport(orderManager);
+                            }
                             break;
 
                         case 8:
-                            manageStaff(scanner, staffManagement);
+                            if ("Manager".equalsIgnoreCase(role)) {
+                                manageStaff(scanner, staffManagement);
+                            }
                             break;
 
                         case 9:
-                            System.out.println("Exiting the system.");
-                            scanner.close();
-                            return;
+                            if ("Manager".equalsIgnoreCase(role)) {
+                                System.out.println("Exiting the system.");
+                                scanner.close();
+                                return;
+                            }
+                            break;
 
                         default:
                             System.out.println("Invalid option, please try again.");
@@ -104,18 +163,23 @@ public class Main {
         }
     }
 
-    // Method to create a reservation
-    private static void createReservation(Scanner scanner, ReservationManager reservationManager) {
-        System.out.print("Enter Customer Name: ");
-        String customerName = scanner.nextLine();
-        System.out.print("Enter Reservation Time (yyyy-MM-ddTHH:mm): ");
-        String reservationTimeInput = scanner.nextLine();
-        LocalDateTime reservationTime = LocalDateTime.parse(reservationTimeInput);
-        System.out.print("Enter Table ID: ");
-        int tableId = scanner.nextInt();
-        scanner.nextLine();  // Consume the newline
-        Reservation reservation = new Reservation(customerName, reservationTime, tableId);
-        reservationManager.addReservation(reservation);
+    // Method to register a new employee
+    private static void registerNewEmployee(Scanner scanner, UserLogin userLogin) {
+        System.out.print("Enter new username: ");
+        String newUsername = scanner.nextLine();
+
+        System.out.print("Enter new password: ");
+        String newPassword = scanner.nextLine();
+
+        System.out.print("Enter role (Manager/Staff): ");
+        String role = scanner.nextLine();
+
+        try {
+            userLogin.addUser(newUsername, newPassword, role);
+            System.out.println("New employee registered successfully.");
+        } catch (Exception e) {
+            System.out.println("An error occurred while registering the employee: " + e.getMessage());
+        }
     }
 
     // Method to manage special offers
@@ -147,12 +211,12 @@ public class Main {
 
             case 3:
                 System.out.print("Enter Offer ID to apply: ");
-                offerId = scanner.nextLine();
+                String offerIdToApply = scanner.nextLine();
                 System.out.print("Enter Order ID: ");
                 String orderIdForOffer = scanner.nextLine();
                 Order orderForOffer = orderManager.getOrderById(orderIdForOffer);
                 if (orderForOffer != null) {
-                    specialOfferManager.applyOfferToOrder(offerId, orderForOffer);
+                    specialOfferManager.applyOfferToOrder(offerIdToApply, orderForOffer);
                 } else {
                     System.out.println("Order ID not found.");
                 }
@@ -160,8 +224,8 @@ public class Main {
 
             case 4:
                 System.out.print("Enter Offer ID to remove: ");
-                offerId = scanner.nextLine();
-                specialOfferManager.removeOffer(offerId);
+                String offerIdToRemove = scanner.nextLine();
+                specialOfferManager.removeOffer(offerIdToRemove);
                 break;
 
             default:
@@ -214,10 +278,10 @@ public class Main {
 
             case 2:
                 System.out.print("Enter Order ID to update: ");
-                orderId = scanner.nextLine();
+                String orderIdToUpdate = scanner.nextLine();
                 System.out.print("Enter new status (Waiting/Preparing/Ready): ");
                 String status = scanner.nextLine();
-                orderManager.updateOrderStatus(orderId, status);
+                orderManager.updateOrderStatus(orderIdToUpdate, status);
                 break;
 
             case 3:

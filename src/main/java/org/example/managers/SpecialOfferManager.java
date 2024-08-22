@@ -13,6 +13,9 @@ public class SpecialOfferManager {
 
     public SpecialOfferManager() {
         this.offers = new HashMap<>();
+
+        // Add predefined offers to the system
+        initializeOffers();
     }
 
     // Method to create a new special offer
@@ -52,6 +55,15 @@ public class SpecialOfferManager {
         for (SpecialOffer offer : offers.values()) {
             System.out.println(offer);
         }
+    }
+
+    // Initialize predefined special offers
+    private void initializeOffers() {
+        SpecialOffer discount1 = new SpecialOffer("DIS10", "10% Off on All Orders", 10.00);
+        SpecialOffer discount2 = new SpecialOffer("MEAL50", "Flat $50 Off on Meal of the Day", 50.00);
+
+        addOffer(discount1);
+        addOffer(discount2);
     }
 }
 

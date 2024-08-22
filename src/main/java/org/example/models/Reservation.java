@@ -1,9 +1,5 @@
 package org.example.models;
 
-/* This file will define the Reservation class, which handles the table reservations in the restaurant.
- * The class will include properties for Customer Name, Reservation Time, and Table ID.
- * It will also include methods to manage the reservation details.
- */
 import java.time.LocalDateTime;
 
 public class Reservation {
@@ -12,6 +8,7 @@ public class Reservation {
     private int tableId; // tableId: Identifies which table is reserved.
 
     // Constructor
+    // NOTE: This constructor is correctly ordered and does not need changes.
     public Reservation(String customerName, LocalDateTime reservationTime, int tableId) {
         this.customerName = customerName;
         this.reservationTime = reservationTime;
@@ -52,4 +49,3 @@ public class Reservation {
                 '}';
     }
 }
-

@@ -1,20 +1,65 @@
 package org.example.managers;
 
-/* Manages all reservations, including creating, listing, and managing conflicts
- * (e.g., ensuring no double-booking of tables at the same time).
- */
-
 import org.example.models.Reservation;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class ReservationManager {
     private List<Reservation> reservations;
 
     public ReservationManager() {
         this.reservations = new ArrayList<>();
+    }
+
+    // Method to create and add a new reservation
+    public void createAndAddReservation(Scanner scanner) {
+        System.out.print("Enter Customer Name: ");
+        String customerName = scanner.nextLine();
+
+        LocalDate date = null;
+        LocalTime time = null;
+
+        // Prompt for date
+        while (date == null) {
+            try {
+                System.out.print("Enter Reservation Date (yyyy-MM-dd): "); // Prompt for date input
+                String dateInput = scanner.nextLine();
+                date = LocalDate.parse(dateInput, DateTimeFormatter.ISO_LOCAL_DATE);
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid date format. Please enter the date in the format yyyy-MM-dd.");
+            }
+        }
+
+        // Prompt for time
+        while (time == null) {
+            try {
+                System.out.print("Enter Reservation Time (HH:mm): "); // Prompt for time input
+                String timeInput = scanner.nextLine();
+                time = LocalTime.parse(timeInput, DateTimeFormatter.ISO_LOCAL_TIME);
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid time format. Please enter the time in the format HH:mm.");
+            }
+        }
+
+        // Combine date and time into LocalDateTime
+        LocalDateTime reservationDateTime = LocalDateTime.of(date, time);
+
+        System.out.print("Enter Table ID: ");
+        int tableId = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        // Create the Reservation object with the correct argument order
+        Reservation reservation = new Reservation(customerName, reservationDateTime, tableId);
+
+        // Add the reservation using the existing method
+        addReservation(reservation);
     }
 
     // Method to add a new reservation
@@ -54,4 +99,3 @@ public class ReservationManager {
         System.out.println("Reservation removed for " + customerName + " at table " + tableId);
     }
 }
-

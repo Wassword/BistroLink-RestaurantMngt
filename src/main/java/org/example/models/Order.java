@@ -1,19 +1,15 @@
 package org.example.models;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-/* The Order class will handle customer orders.
- * This class includes properties such as order ID, items ordered, total price, and status.
- */
-
-public class Order {
+public class Order implements Serializable {
     private String orderId;
-    private Map<MenuItem, Integer> itemsOrdered; // MenuItem as key, quantity as value
+    private Map<MenuItem, Integer> itemsOrdered;
     private double totalPrice;
     private String status; // "Waiting", "Preparing", "Ready"
 
-    // Constructor
     public Order(String orderId) {
         this.orderId = orderId;
         this.itemsOrdered = new HashMap<>();
@@ -53,7 +49,6 @@ public class Order {
         return totalPrice;
     }
 
-    // New method to set the total price
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
     }
@@ -64,20 +59,5 @@ public class Order {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    // Convenience method to check if order has items
-    public boolean hasItems() {
-        return !itemsOrdered.isEmpty();
-    }
-
-    @Override
-    public String toString() {
-        return "Order{" +
-                "orderId='" + orderId + '\'' +
-                ", itemsOrdered=" + itemsOrdered +
-                ", totalPrice=" + totalPrice +
-                ", status='" + status + '\'' +
-                '}';
     }
 }

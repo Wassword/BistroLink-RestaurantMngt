@@ -1,12 +1,10 @@
 package org.example.login;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 public class UserLogin {
     private HashMap<String, String> users = new HashMap<>();
@@ -30,20 +28,24 @@ public class UserLogin {
     }
 
     public boolean login(String username, String password) throws Exception {
+        if (!users.containsKey(username)) {
+            return false;
+        }
+
         String[] storedPasswordAndSalt = users.get(username).split(":");
         String storedHashedPassword = storedPasswordAndSalt[0];
         String storedSalt = storedPasswordAndSalt[1];
 
         String hashedPassword = hashPasswordWithSalt(password, storedSalt);
 
-        return users.containsKey(username) && storedHashedPassword.equals(hashedPassword);
+        return storedHashedPassword.equals(hashedPassword);
     }
 
     public String getRole(String username) {
         return roles.get(username);
     }
 
-    private String hashPassword(String password) throws Exception {
+    protected String hashPassword(String password) throws Exception {
         String salt = generateSalt();
         String saltedPassword = salt + password;
 

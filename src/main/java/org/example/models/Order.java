@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /* The Order class will handle customer orders.
- * This class will include properties such as order ID, items ordered, total price, and status.
+ * This class includes properties such as order ID, items ordered, total price, and status.
  */
 
 public class Order {
@@ -53,6 +53,11 @@ public class Order {
         return totalPrice;
     }
 
+    // New method to set the total price
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
     public String getStatus() {
         return status;
     }
@@ -61,8 +66,9 @@ public class Order {
         this.status = status;
     }
 
-    public void setTotalPrice(double totalPrice) {
-        this.totalPrice = totalPrice;
+    // Convenience method to check if order has items
+    public boolean hasItems() {
+        return !itemsOrdered.isEmpty();
     }
 
     @Override

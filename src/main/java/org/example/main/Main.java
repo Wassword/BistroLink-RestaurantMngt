@@ -12,13 +12,44 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        MenuManagement menuManagement = new MenuManagement();
+
+        System.out.println("1. Initialize and Save Menu");
+        System.out.println("2. Continue to Restaurant Management System");
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        if (choice == 1) {
+            initializeAndSaveMenu(menuManagement);
+        } else if (choice == 2) {
+            startRestaurantManagementSystem(scanner, menuManagement);
+        }
+    }
+
+    private static void initializeAndSaveMenu(MenuManagement menuManagement) {
+        // Initialize some menu items
+        menuManagement.addMenuItem(new MenuItem("Margherita Pizza", "Classic Margherita pizza with tomato, mozzarella, and basil", 15, 8.99, List.of("Tomato", "Mozzarella", "Basil")));
+        menuManagement.addMenuItem(new MenuItem("Spaghetti Carbonara", "Spaghetti with eggs, cheese, pancetta, and pepper", 20, 12.50, List.of("Spaghetti", "Eggs", "Cheese", "Pancetta", "Pepper")));
+        menuManagement.addMenuItem(new MenuItem("Tiramisu", "Traditional Italian dessert with mascarpone cheese and coffee", 30, 6.00, List.of("Mascarpone", "Coffee", "Ladyfingers", "Cocoa")));
+
+        // Save the initialized menu
+        try {
+            menuManagement.saveMenu();
+            System.out.println("Menu initialized and saved successfully.");
+        } catch (IOException e) {
+            System.out.println("Error saving menu: " + e.getMessage());
+        }
+    }
+
+    private static void startRestaurantManagementSystem(Scanner scanner, MenuManagement menuManagement) {
+        // Initialize other managers
         UserLogin userLogin = new UserLogin();
         ReservationManager reservationManager = new ReservationManager();
-        SpecialOfferManager specialOfferManager = new SpecialOfferManager();
+        // Uncomment once SpecialOfferManager is available
+        // SpecialOfferManager specialOfferManager = new SpecialOfferManager();
         OrderManager orderManager = new OrderManager();
         TableManager tableManager = new TableManager();
         InventoryManagement inventoryManagement = new InventoryManagement(5);  // Set a default low stock threshold
-        MenuManagement menuManagement = new MenuManagement();
 
         System.out.println("Welcome to the Restaurant Management System");
 
@@ -35,7 +66,7 @@ public class Main {
                     registerEmployee(scanner, userLogin);
                     break;
                 case 2:
-                    if (performLogin(scanner, userLogin)) {
+                    if (performLogin(scanner, userLogin, reservationManager, orderManager, tableManager, inventoryManagement, menuManagement)) {
                         return;  // End program after successful login and role-based operations
                     }
                     break;
@@ -70,7 +101,7 @@ public class Main {
         }
     }
 
-    private static boolean performLogin(Scanner scanner, UserLogin userLogin) {
+    private static boolean performLogin(Scanner scanner, UserLogin userLogin, ReservationManager reservationManager, OrderManager orderManager, TableManager tableManager, InventoryManagement inventoryManagement, MenuManagement menuManagement) {
         try {
             System.out.print("Please enter your username: ");
             String username = scanner.nextLine();
@@ -83,9 +114,9 @@ public class Main {
                 System.out.println("Your role: " + role);
 
                 if ("Manager".equalsIgnoreCase(role)) {
-                    showManagerMenu(scanner, userLogin);
+                    showManagerMenu(scanner, reservationManager, orderManager, tableManager, inventoryManagement, menuManagement);
                 } else if ("Staff".equalsIgnoreCase(role)) {
-                    showStaffMenu(scanner, userLogin);
+                    showStaffMenu(scanner, orderManager, tableManager);
                 }
                 return true;
             } else {
@@ -97,14 +128,7 @@ public class Main {
         return false;
     }
 
-    private static void showManagerMenu(Scanner scanner, UserLogin userLogin) {
-        ReservationManager reservationManager = new ReservationManager();
-        SpecialOfferManager specialOfferManager = new SpecialOfferManager();
-        OrderManager orderManager = new OrderManager();
-        TableManager tableManager = new TableManager();
-        InventoryManagement inventoryManagement = new InventoryManagement(5);
-        MenuManagement menuManagement = new MenuManagement();
-
+    private static void showManagerMenu(Scanner scanner, ReservationManager reservationManager, OrderManager orderManager, TableManager tableManager, InventoryManagement inventoryManagement, MenuManagement menuManagement) {
         while (true) {
             System.out.println("\nManager Menu");
             System.out.println("1. Create a Reservation");
@@ -125,10 +149,12 @@ public class Main {
                     createReservation(scanner, reservationManager);
                     break;
                 case 2:
-                    manageSpecialOffers(scanner, specialOfferManager, orderManager);
+                    // Uncomment and use when SpecialOfferManager is available
+                    // manageSpecialOffers(scanner, specialOfferManager, orderManager);
+                    System.out.println("Special Offer Management is not available yet.");
                     break;
                 case 3:
-                    processOrders(scanner, orderManager);
+                    processOrders(scanner, orderManager, menuManagement);
                     break;
                 case 4:
                     manageTables(scanner, tableManager);
@@ -151,10 +177,7 @@ public class Main {
         }
     }
 
-    private static void showStaffMenu(Scanner scanner, UserLogin userLogin) {
-        OrderManager orderManager = new OrderManager();
-        TableManager tableManager = new TableManager();
-
+    private static void showStaffMenu(Scanner scanner, OrderManager orderManager, TableManager tableManager) {
         while (true) {
             System.out.println("\nStaff Menu");
             System.out.println("1. Process Orders");
@@ -167,7 +190,7 @@ public class Main {
 
             switch (option) {
                 case 1:
-                    processOrders(scanner, orderManager);
+                    processOrders(scanner, orderManager, null);
                     break;
                 case 2:
                     manageTables(scanner, tableManager);
@@ -180,9 +203,6 @@ public class Main {
             }
         }
     }
-
-    // Additional methods used in the menu (e.g., createReservation, manageSpecialOffers, etc.)
-    // Implement these methods similarly to how you've done in the main loop
 
     private static void createReservation(Scanner scanner, ReservationManager reservationManager) {
         System.out.print("Enter Customer Name: ");
@@ -197,57 +217,12 @@ public class Main {
         reservationManager.addReservation(reservation);
     }
 
-    private static void manageSpecialOffers(Scanner scanner, SpecialOfferManager specialOfferManager, OrderManager orderManager) {
-        System.out.println("1. Add a Special Offer");
-        System.out.println("2. List All Special Offers");
-        System.out.println("3. Apply Special Offer to Order");
-        System.out.println("4. Remove a Special Offer");
-        System.out.print("Select an option: ");
-        int specialOfferOption = scanner.nextInt();
-        scanner.nextLine();  // Consume the newline
+    // Placeholder for Special Offer management
+    // private static void manageSpecialOffers(Scanner scanner, SpecialOfferManager specialOfferManager, OrderManager orderManager) {
+    //     // Implement this when SpecialOfferManager is available
+    // }
 
-        switch (specialOfferOption) {
-            case 1:
-                System.out.print("Enter Offer ID: ");
-                String offerId = scanner.nextLine();
-                System.out.print("Enter Offer Description: ");
-                String description = scanner.nextLine();
-                System.out.print("Enter Discount Amount: ");
-                double discountAmount = scanner.nextDouble();
-                scanner.nextLine();  // Consume the newline
-                SpecialOffer specialOffer = new SpecialOffer(offerId, description, discountAmount);
-                specialOfferManager.addOffer(specialOffer);
-                break;
-
-            case 2:
-                specialOfferManager.listOffers();
-                break;
-
-            case 3:
-                System.out.print("Enter Offer ID to apply: ");
-                offerId = scanner.nextLine();
-                System.out.print("Enter Order ID: ");
-                String orderIdForOffer = scanner.nextLine();
-                Order orderForOffer = orderManager.getOrderById(orderIdForOffer);
-                if (orderForOffer != null) {
-                    specialOfferManager.applyOfferToOrder(offerId, orderForOffer);
-                } else {
-                    System.out.println("Order ID not found.");
-                }
-                break;
-
-            case 4:
-                System.out.print("Enter Offer ID to remove: ");
-                offerId = scanner.nextLine();
-                specialOfferManager.removeOffer(offerId);
-                break;
-
-            default:
-                System.out.println("Invalid option.");
-        }
-    }
-
-    private static void processOrders(Scanner scanner, OrderManager orderManager) {
+    private static void processOrders(Scanner scanner, OrderManager orderManager, MenuManagement menuManagement) {
         System.out.println("1. Create a new Order");
         System.out.println("2. Update Order Status");
         System.out.println("3. List all Orders");
@@ -260,30 +235,24 @@ public class Main {
                 System.out.print("Enter Order ID: ");
                 String orderId = scanner.nextLine();
                 Order order = new Order(orderId);
-                while (true) {
-                    System.out.print("Enter Item Name (or 'done' to finish): ");
-                    String itemName = scanner.nextLine();
-                    if (itemName.equalsIgnoreCase("done")) {
-                        break;
+
+                if (menuManagement != null) {
+                    while (true) {
+                        System.out.print("Enter Item Name (or 'done' to finish): ");
+                        String itemName = scanner.nextLine();
+                        if (itemName.equalsIgnoreCase("done")) {
+                            break;
+                        }
+                        MenuItem menuItem = menuManagement.getMenuItem(itemName);
+                        if (menuItem == null) {
+                            System.out.println("Item not found. Please try again.");
+                            continue;
+                        }
+                        System.out.print("Enter Quantity: ");
+                        int quantity = scanner.nextInt();
+                        scanner.nextLine();  // Consume the newline
+                        order.addItem(menuItem, quantity);
                     }
-                    System.out.print("Enter Item Description: ");
-                    String itemDescription = scanner.nextLine();
-                    System.out.print("Enter Preparation Time (in minutes): ");
-                    int preparationTime = scanner.nextInt();
-                    System.out.print("Enter Price: ");
-                    double price = scanner.nextDouble();
-                    scanner.nextLine(); // Consume newline
-
-                    System.out.print("Enter Ingredients (comma-separated): ");
-                    String ingredientsInput = scanner.nextLine();
-                    List<String> ingredients = List.of(ingredientsInput.split(",\\s*"));
-
-                    MenuItem menuItem = new MenuItem(itemName, itemDescription, preparationTime, price, ingredients);
-                    System.out.print("Enter Quantity: ");
-                    int quantity = scanner.nextInt();
-                    scanner.nextLine(); // Consume newline
-
-                    order.addItem(menuItem, quantity);
                 }
                 orderManager.createOrder(order);
                 break;

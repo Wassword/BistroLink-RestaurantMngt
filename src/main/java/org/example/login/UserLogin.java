@@ -3,12 +3,14 @@ package org.example.login;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 public class UserLogin {
-    private final HashMap<String, String> users = new HashMap<>();
-    private final HashMap<String, String> roles = new HashMap<>();
+    private HashMap<String, String> users = new HashMap<>();
+    private HashMap<String, String> roles = new HashMap<>();
     private static final String USER_DATA_FILE = "users.txt";
 
     public UserLogin() {
@@ -16,8 +18,7 @@ public class UserLogin {
         try {
             loadUsers();
         } catch (IOException e) {
-             e.printStackTrace();
-
+            e.printStackTrace();
         }
     }
 
@@ -29,8 +30,13 @@ public class UserLogin {
     }
 
     public boolean login(String username, String password) throws Exception {
-        String hashedPassword = hashPassword(password);
-        return users.containsKey(username) && users.get(username).equals(hashedPassword);
+        String[] storedPasswordAndSalt = users.get(username).split(":");
+        String storedHashedPassword = storedPasswordAndSalt[0];
+        String storedSalt = storedPasswordAndSalt[1];
+
+        String hashedPassword = hashPasswordWithSalt(password, storedSalt);
+
+        return users.containsKey(username) && storedHashedPassword.equals(hashedPassword);
     }
 
     public String getRole(String username) {
@@ -38,12 +44,44 @@ public class UserLogin {
     }
 
     private String hashPassword(String password) throws Exception {
+        String salt = generateSalt();
+        String saltedPassword = salt + password;
+
         MessageDigest md = MessageDigest.getInstance("SHA-256");
-        byte[] hash = md.digest(password.getBytes(StandardCharsets.UTF_8));
+        byte[] hash = md.digest(saltedPassword.getBytes("UTF-8"));
+
         StringBuilder sb = new StringBuilder();
         for (byte b : hash) {
             sb.append(String.format("%02x", b));
         }
+
+        return sb.toString() + ":" + salt; // Store the hash and the salt together
+    }
+
+    private String hashPasswordWithSalt(String password, String salt) throws Exception {
+        String saltedPassword = salt + password;
+
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        byte[] hash = md.digest(saltedPassword.getBytes("UTF-8"));
+
+        StringBuilder sb = new StringBuilder();
+        for (byte b : hash) {
+            sb.append(String.format("%02x", b));
+        }
+
+        return sb.toString();
+    }
+
+    private static String generateSalt() {
+        SecureRandom sr = new SecureRandom();
+        byte[] salt = new byte[16];
+        sr.nextBytes(salt);
+
+        StringBuilder sb = new StringBuilder();
+        for (byte b : salt) {
+            sb.append(String.format("%02x", b));
+        }
+
         return sb.toString();
     }
 

@@ -4,11 +4,16 @@ import org.example.managers.MenuManagement;
 import org.example.managers.OrderManager;
 import org.example.models.MenuItem;
 import org.example.models.Order;
+import org.example.models.Sound;
 
 import java.util.Scanner;
 
 public class CustomerOrderSystem {
     public static void main(String[] args) {
+        // Start the background music
+        Sound soundManager = new Sound();
+        new Thread(() -> soundManager.playSound("OneRepublic_-_Nobody_from_Kaiju_No_8.wav")).start();
+
         Scanner scanner = new Scanner(System.in);
         MenuManagement menuManagement = new MenuManagement();
         OrderManager orderManager = new OrderManager();

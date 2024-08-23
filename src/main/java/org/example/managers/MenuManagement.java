@@ -14,7 +14,8 @@ public class MenuManagement {
         initializeMenu();  // Initialize with Italian menu items
     }
 
-    public void initializeMenu() {
+    private void initializeMenu() {
+        // Add some Italian food and pasta dishes to the menu
         menuItems.add(new MenuItem("Margherita Pizza", "Classic pizza with tomatoes, mozzarella, and basil", 15, 10.99, List.of("Tomatoes", "Mozzarella", "Basil")));
         menuItems.add(new MenuItem("Lasagna", "Layered pasta with beef, cheese, and tomato sauce", 30, 14.99, List.of("Pasta", "Beef", "Tomato Sauce", "Cheese")));
         menuItems.add(new MenuItem("Spaghetti Carbonara", "Spaghetti with eggs, cheese, pancetta, and pepper", 20, 12.99, List.of("Spaghetti", "Eggs", "Cheese", "Pancetta", "Pepper")));
@@ -28,11 +29,6 @@ public class MenuManagement {
         return menuItems;
     }
 
-    // Added to match the method name in CustomerOrderSystem.java
-    public List<MenuItem> getAllMenuItems() {
-        return getMenuItems();
-    }
-
     public MenuItem getMenuItem(String name) {
         for (MenuItem item : menuItems) {
             if (item.getName().equalsIgnoreCase(name)) {
@@ -43,8 +39,14 @@ public class MenuManagement {
     }
 
     public void listMenuItems() {
+        System.out.println("---------- Restaurant Menu ----------");
         for (MenuItem item : menuItems) {
-            System.out.println(item);
+            System.out.println("Name: " + item.getName());
+            System.out.println("Description: " + item.getDescription());
+            System.out.println("Price: $" + String.format("%.2f", item.getPrice()));
+            System.out.println("Preparation Time: " + item.getPreparationTime() + " min");
+            System.out.println("Ingredients: " + String.join(", ", item.getIngredients()));
+            System.out.println("--------------------------------------");
         }
     }
 

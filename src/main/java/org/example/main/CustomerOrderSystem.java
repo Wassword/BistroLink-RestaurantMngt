@@ -4,61 +4,80 @@ import org.example.managers.MenuManagement;
 import org.example.managers.OrderManager;
 import org.example.models.MenuItem;
 import org.example.models.Order;
-import org.example.models.Sound;
+import org.example.utils.Colors;
 
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import java.io.InputStream;
 import java.util.Scanner;
 
 public class CustomerOrderSystem {
-    public static void main(String[] args) {
-        // Start the background music
-        Sound soundManager = new Sound();
-        new Thread(() -> soundManager.playSound("OneRepublic_-_Nobody_from_Kaiju_No_8.wav")).start();
+    private final MenuManagement menuManagement;
+    private final OrderManager orderManager;
+
+    public CustomerOrderSystem(MenuManagement menuManagement, OrderManager orderManager) {
+        this.menuManagement = menuManagement;
+        this.orderManager = orderManager;
+    }
+
+    public void run() {
+        // Start playing background music
+        playBackgroundMusic("/OneRepublic_-_Nobody_from_Kaiju_No_8.wav");
 
         Scanner scanner = new Scanner(System.in);
-        MenuManagement menuManagement = new MenuManagement();
-        OrderManager orderManager = OrderManager.getInstance();  // Ensure we're using the singleton instance
+        System.out.println(Colors.GREEN + "Welcome to the Restaurant Ordering System" + Colors.RESET);
 
-        try {
-            menuManagement.loadMenu();
-        } catch (Exception e) {
-            System.out.println("Error loading menu: " + e.getMessage());
-            System.out.println("Initializing a fresh menu...");
-            menuManagement.initializeMenu();  // This could be a method to populate with default items
-        }
+        // Display the menu
+        menuManagement.listMenuItems();
 
-        System.out.println("Welcome to the Restaurant Ordering System");
-        System.out.println("Menu:");
-
-        // Print each menu item
-        for (MenuItem item : menuManagement.getAllMenuItems()) {
-            System.out.println(item);
-        }
-
-        System.out.print("Enter Order ID: ");
+        // Process order
+        System.out.print(Colors.YELLOW + "Enter Order ID: " + Colors.RESET);
         String orderId = scanner.nextLine();
         Order order = new Order(orderId);
-        System.out.println("DEBUG: Created Order with ID: " + orderId); // Debugging
 
         while (true) {
-            System.out.print("Enter Item Name (or 'done' to finish): ");
+            System.out.print(Colors.YELLOW + "Enter Item Name (or 'done' to finish): " + Colors.RESET);
             String itemName = scanner.nextLine();
             if (itemName.equalsIgnoreCase("done")) {
                 break;
             }
+
             MenuItem menuItem = menuManagement.getMenuItem(itemName);
             if (menuItem == null) {
-                System.out.println("Item not found. Please try again.");
+                System.out.println(Colors.RED + "Item not found. Please try again." + Colors.RESET);
                 continue;
             }
-            System.out.print("Enter Quantity: ");
+
+            System.out.print(Colors.YELLOW + "Enter Quantity: " + Colors.RESET);
             int quantity = scanner.nextInt();
-            scanner.nextLine();  // Consume newline
+            scanner.nextLine(); // Consume newline
+
             order.addItem(menuItem, quantity);
-            System.out.print("DEBUG: Added item to order: " + menuItem.getName() + " x " + quantity); // Debugging
         }
 
-        // Finalize and add the order to OrderManager
         orderManager.createOrder(order);
-        System.out.println("DEBUG: Order added to OrderManager: " + order.getOrderId()); // "Order has been added successfully!");
+        System.out.println(Colors.GREEN + "Order created successfully!" + Colors.RESET);
+    }
+
+    private void playBackgroundMusic(String filepath) {
+        try (InputStream audioSrc = getClass().getResourceAsStream(filepath)) {
+            if (audioSrc != null) {
+                Clip clip = AudioSystem.getClip();
+                clip.open(AudioSystem.getAudioInputStream(audioSrc));
+                clip.start();
+                clip.loop(Clip.LOOP_CONTINUOUSLY);  // Loop the music continuously
+            } else {
+                System.out.println(Colors.RED + "Cannot find the music file." + Colors.RESET);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+        MenuManagement menuManagement = new MenuManagement();
+        OrderManager orderManager = OrderManager.getInstance();
+        CustomerOrderSystem system = new CustomerOrderSystem(menuManagement, orderManager);
+        system.run();
     }
 }

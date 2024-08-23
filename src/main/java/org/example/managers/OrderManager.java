@@ -13,10 +13,12 @@ public class OrderManager {
     private Map<String, Order> orders = new HashMap<>();
     private static final String FILE_PATH = "orders.dat";
 
+    // Private constructor to implement the Singleton pattern
     private OrderManager() {
         loadOrders(); // Load orders when the manager is initialized
     }
 
+    // Static method to provide a global point of access to the singleton instance
     public static OrderManager getInstance() {
         if (instance == null) {
             instance = new OrderManager();
@@ -24,12 +26,14 @@ public class OrderManager {
         return instance;
     }
 
+    // Method to create a new order and save it to the file
     public void createOrder(Order order) {
         orders.put(order.getOrderId(), order);
         saveOrders(); // Save the orders whenever a new one is added
         System.out.println("Order created: " + order.getOrderId());
     }
 
+    // Method to list all orders
     public void listOrders() {
         if (orders.isEmpty()) {
             System.out.println("No orders found.");
@@ -43,10 +47,12 @@ public class OrderManager {
         }
     }
 
+    // Method to get an order by its ID
     public Order getOrderById(String orderId) {
         return orders.get(orderId);
     }
 
+    // Method to update the status of an order
     public void updateOrderStatus(String orderId, String status) {
         Order order = orders.get(orderId);
         if (order != null) {
@@ -58,10 +64,12 @@ public class OrderManager {
         }
     }
 
+    // Method to get all orders as a list
     public List<Order> getAllOrders() {
         return orders.values().stream().collect(Collectors.toList());
     }
 
+    // Private method to save all orders to a file
     private void saveOrders() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_PATH))) {
             oos.writeObject(orders);
@@ -70,6 +78,7 @@ public class OrderManager {
         }
     }
 
+    // Private method to load orders from a file
     private void loadOrders() {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_PATH))) {
             orders = (Map<String, Order>) ois.readObject();

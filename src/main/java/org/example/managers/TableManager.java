@@ -1,7 +1,5 @@
 package org.example.managers;
 
-// This class will manage the tables, including updating their status and assigning customers to specific tables.
-
 import org.example.models.Table;
 
 import java.util.ArrayList;
@@ -61,5 +59,9 @@ public class TableManager {
             System.out.println("Table " + tableId + " not found.");
         }
     }
-}
 
+    // Method to get the list of tables (added to support testing)
+    public List<Table> getTables() {
+        return tables;
+    }
+}

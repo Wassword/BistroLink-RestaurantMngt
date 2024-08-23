@@ -6,7 +6,6 @@ import org.example.models.*;
 import org.example.reports.SalesReport;
 import org.example.utils.Colors;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.List;

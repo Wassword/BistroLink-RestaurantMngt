@@ -45,7 +45,7 @@ public class UserLogin {
         return roles.get(username);
     }
 
-    protected String hashPassword(String password) throws Exception {
+    public String hashPassword(String password) throws Exception {
         String salt = generateSalt();
         String saltedPassword = salt + password;
 
@@ -60,7 +60,7 @@ public class UserLogin {
         return sb.toString() + ":" + salt; // Store the hash and the salt together
     }
 
-    private String hashPasswordWithSalt(String password, String salt) throws Exception {
+    public String hashPasswordWithSalt(String password, String salt) throws Exception {
         String saltedPassword = salt + password;
 
         MessageDigest md = MessageDigest.getInstance("SHA-256");

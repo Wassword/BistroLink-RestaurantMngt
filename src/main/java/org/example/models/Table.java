@@ -13,7 +13,7 @@ public class Table {
     public Table(int tableId, int size) {
         this.tableId = tableId;
         this.size = size;
-        this.status = "Available";
+        this.status = "Available"; // Initialize status as "Available"
     }
 
     // Getters and Setters

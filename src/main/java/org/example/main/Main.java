@@ -81,8 +81,9 @@ public class Main {
                         System.out.println("9. Exit");
                     } else if ("Staff".equalsIgnoreCase(role)) {
                         System.out.println("1. Create a Reservation");
-                        System.out.println("2. Process Orders");
-                        System.out.println("3. Exit");
+                        System.out.println("2. Manage Tables");
+                        System.out.println("3. Process Orders");
+                        System.out.println("4. Exit");
                     }
 
                     System.out.print("Select an option: ");
@@ -98,7 +99,7 @@ public class Main {
                             if ("Manager".equalsIgnoreCase(role)) {
                                 manageSpecialOffers(scanner, specialOfferManager, orderManager);
                             } else if ("Staff".equalsIgnoreCase(role)) {
-                                processOrders(scanner, orderManager, menuManagement);
+                                manageTables(scanner, tableManager);
                             }
                             break;
 
@@ -115,6 +116,10 @@ public class Main {
                         case 4:
                             if ("Manager".equalsIgnoreCase(role)) {
                                 manageTables(scanner, tableManager);
+                            } else if ("Staff".equalsIgnoreCase(role)) {
+                                System.out.println("Exiting the system.");
+                                scanner.close();
+                                return;
                             }
                             break;
 
